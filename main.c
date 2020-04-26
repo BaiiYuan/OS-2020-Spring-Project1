@@ -18,7 +18,7 @@ int set_next_process(int policy_id, int n_proc, Process *proc) {
             if (cur_proc != -1) return cur_proc;
 
             for(int i = 0; i < n_proc; i++) { // Directly find next in sorted proc
-                if(proc[i].pid == -1 || proc[i].t_exec == 0) {
+                if(proc[i].pid == -1 || proc[i].exec_time == 0) {
                     continue;
                 }
                 return i;
@@ -46,7 +46,7 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
     t_total = 0;
     finish_n_proc = 0;
 
-    while (true) {
+    while (1 == 1) {
         fprintf(stderr, "Current time: %d\n", t_total);
 
         if (cur_proc != -1 && proc[cur_proc].exec_time == 0) {
@@ -55,23 +55,23 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
             cur_proc = -1;
             finish_n_proc++;
 
-            if (finish_n_proc == nproc) break; // End!
+            if (finish_n_proc == n_proc) break; // End!
         }
 
         // Check the process is ready or not
         for (int i = 0; i < n_proc; i++) {
-            if (proc[i].ready_time == ntime) {
+            if (proc[i].ready_time == n_time) {
                 proc[i].pid = exec(proc[i]);
                 block(proc[i].pid);
-                fprintf(stderr, "%s ready at time %d.\n", proc[i].name, ntime);
+                fprintf(stderr, "%s ready at time %d.\n", proc[i].name, n_time);
             }
         }
 
         // Find next running process
-        int next_proc = next_process(proc, nproc, policy);
+        int next_proc = next_process(proc, n_proc, policy_id);
         if (next_proc != -1 && next_proc != cur_proc) {
-            proc_wakeup(proc[next_proc].pid);
-            proc_block(proc[cur_proc].pid);
+            wakeup(proc[next_proc].pid);
+            block(proc[cur_proc].pid);
             cur_proc = next_proc;
             t_last = t_total;
         }
@@ -79,7 +79,7 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
 
         // Run unit of time
         UNI_T();
-        if (cur_proc != -1) proc[cur_proc].t_exex -= 1;
+        if (cur_proc != -1) proc[cur_proc].exec_time -= 1;
         t_total ++;
     }
 }
