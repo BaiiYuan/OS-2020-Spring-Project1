@@ -13,53 +13,55 @@ static int total_time;
 static int last_time;
 static int finish_n_proc;
 
+Process *read_input(int *policy, int *n_proc);
+void scheduling(int policy_id, int n_proc, Process *proc) ;
+
+int main(int argc, char **argv) {
+    int n_proc, policy_id;
+    Process *proc_pool = read_input(&policy_id, &n_proc);
+    for (int i = 0; i < n_proc; i++) {
+        printf("%s %d %d\n", proc_pool[i].name, proc_pool[i].ready_time, proc_pool[i].exec_time);
+    }
+    scheduling(policy_id, n_proc, proc_pool);
+    return 0;
+}
+
 int get_next_process(int policy_id, int n_proc, Process *proc) {
     switch(policy_id) {
         case _FIFO:
-            if (cur_proc != -1) return cur_proc;
-
+            if (cur_proc != -1) { return cur_proc; }
             for(int i = 0; i < n_proc; i++) { // Directly find next in sorted proc
-                if(proc[i].pid == -1 || proc[i].exec_time == 0) {
-                    continue;
-                }
+                if(proc[i].pid == -1 || proc[i].exec_time == 0) { continue; }
                 return i;
-            }
-            break;
+            } break;
         case _RR:
             if ((total_time - last_time) % 500 == 0)  {
                 int ret = (cur_proc + 1) % n_proc;
-                while (proc[ret].pid == -1 || proc[ret].exec_time == 0)
+                while (proc[ret].pid == -1 || proc[ret].exec_time == 0) {
                     ret = (ret + 1) % n_proc;
-                return ret;
+                } return ret;
             } else if (cur_proc != -1) {
                 return cur_proc;
             } else {
                 for (int i = 0; i < n_proc; i++) {
-                    if(proc[i].pid == -1 || proc[i].exec_time == 0) {
-                        continue;
-                    }
+                    if(proc[i].pid == -1 || proc[i].exec_time == 0) { continue; }
                     return i;
                 }
-            }
-            break;
+            } break;
         case _SJF:
-            if (cur_proc != -1) return cur_proc;
+            if (cur_proc != -1) { return cur_proc; }
             // And then fall through PSJF
         case _PSJF:
             int ret = -1;
             for(int i = 0; i < n_proc; i++) { // Directly find next in sorted proc
-                if(proc[i].pid == -1 || proc[i].exec_time == 0) {
-                    continue;
-                }
-                if (ret == -1 || proc[i].exec_time < proc[ret].exec_time)
+                if(proc[i].pid == -1 || proc[i].exec_time == 0) { continue; }
+                if (ret == -1 || proc[i].exec_time < proc[ret].exec_time) {
                     ret = i;
-            }
-            return ret;
-            break;
+                }
+            } return ret;
     }
     return -1;
 }
-
 
 void scheduling(int policy_id, int n_proc, Process *proc) {
     int sched_pid = getpid();
@@ -79,9 +81,8 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
             cur_proc = -1;
             finish_n_proc++;
 
-            if (finish_n_proc == n_proc) break; // End!
+            if (finish_n_proc == n_proc) { break; } // End!
         }
-
         // Check processes are ready or not
         for (int i = 0; i < n_proc; i++) {
             if (proc[i].ready_time == total_time) {
@@ -90,7 +91,6 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
                 fprintf(stderr, "%s ready at time %d.\n", proc[i].name, total_time);
             }
         }
-
         // Find next running process
         int next_proc = get_next_process(policy_id, n_proc, proc);
         if (next_proc != -1 && next_proc != cur_proc) {
@@ -99,12 +99,10 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
             cur_proc = next_proc;
             last_time = total_time;
         }
-
-
         // Run unit of time
         UNI_T();
         total_time ++;
-        if (cur_proc != -1) proc[cur_proc].exec_time -= 1;
+        if (cur_proc != -1) { proc[cur_proc].exec_time -= 1; }
     }
 }
 
@@ -123,10 +121,10 @@ Process *read_input(int *policy, int *n_proc) {
     }
     qsort(proc, *n_proc, sizeof(Process), cmp_proc);
 
-    if (strcmp(sched_policy, "FIFO") == 0) *policy = _FIFO;
-    else if (strcmp(sched_policy, "RR") == 0) *policy = _RR;
-    else if (strcmp(sched_policy, "SJF") == 0) *policy = _SJF;
-    else if (strcmp(sched_policy, "PSJF") == 0) *policy = _PSJF;
+    if (strcmp(sched_policy, "FIFO") == 0) { *policy = _FIFO; }
+    else if (strcmp(sched_policy, "RR") == 0) { *policy = _RR; }
+    else if (strcmp(sched_policy, "SJF") == 0) { *policy = _SJF; }
+    else if (strcmp(sched_policy, "PSJF") == 0) { *policy = _PSJF; }
     else {
         fprintf(stderr, "Invalid policy: %s", sched_policy);
         exit(0);
@@ -134,24 +132,11 @@ Process *read_input(int *policy, int *n_proc) {
     return proc;
 }
 
-void test_sys_call() {
-    syscall(LOG_INFO, "GGininder\n");
-    long start_sec, start_nsec, end_sec, end_nsec;
-    syscall(GET_TIME, &start_sec, &start_nsec);
-    UNI_T();
-    syscall(GET_TIME, &end_sec, &end_nsec);
-    printf("Start:%ld-%ld, End:%ld-%ld\n", start_sec, start_nsec, end_sec, end_nsec);
-}
-
-int main(int argc, char **argv) {
-    int n_proc, policy_id;
-    Process *proc_pool = read_input(&policy_id, &n_proc);
-    test_sys_call();
-
-    for (int i = 0; i < n_proc; i++) {
-        printf("%s %d %d\n", proc_pool[i].name, proc_pool[i].ready_time, proc_pool[i].exec_time);
-    }
-    scheduling(policy_id, n_proc, proc_pool);
-    return 0;
-}
-
+// void test_sys_call() {
+//     syscall(LOG_INFO, "GGininder\n");
+//     long start_sec, start_nsec, end_sec, end_nsec;
+//     syscall(GET_TIME, &start_sec, &start_nsec);
+//     UNI_T();
+//     syscall(GET_TIME, &end_sec, &end_nsec);
+//     printf("Start:%ld-%ld, End:%ld-%ld\n", start_sec, start_nsec, end_sec, end_nsec);
+// }
