@@ -16,11 +16,16 @@ static int finish_cnt;
 int scheduling(int policy_id, int n_proc, Process *proc) {
     int sched_pid = getpid();
     assign_cpu(sched_pid, 0);
-    int ret = wakeup(sched_pid); 
+    int ret = wakeup(sched_pid);
     printf("pid: %d, ret: %i\n", sched_pid, ret);
-    
+
     while (true) {
-        
+        // Check the process is ready or not
+
+        // Find next running process
+
+
+        // Run unit of time
         UNI_T();
         if (cur_proc != -1) proc[cur_proc].t_exex -= 1;
         t_total ++;
@@ -36,6 +41,7 @@ int read_input(int *n_proc, Process *proc) {
     char sched_policy[16];
     scanf("%s\n%d\n", sched_policy, n_proc);
     fprintf(stderr, "%s, %d\n", sched_policy, *n_proc);
+
     proc = (Process*)malloc(*n_proc * sizeof(Process));
     for (int i = 0; i < *n_proc; i++) {
         scanf("%s %d %d\n", proc[i].name, &proc[i].t_ready, &proc[i].t_exec);

@@ -10,21 +10,19 @@
 
 #include "process.h"
 
-int assign_cpu(int pid, int core) {
-    if (core > sizeof(cpu_set_t)) {
-        fprintf(stderr, "Core index error.");
+int assign_cpu(int pid, int core_id) {
+    if (core_id > sizeof(cpu_set_t)) {
+        perror("Core index error.");
         return -1;
     }
-
     cpu_set_t mask;
     CPU_ZERO(&mask);
-    CPU_SET(core, &mask);
+    CPU_SET(core_id, &mask);
 
     if (sched_setaffinity(pid, sizeof(mask), &mask) < 0) {
         perror("sched_setaffinity");
-        exit(1);
+        return -1;
     }
-
     return 0;
 }
 
@@ -38,6 +36,7 @@ int exec(Process proc) {
     if (pid == 0) {
         long start_sec, start_nsec, end_sec, end_nsec;
         char to_dmesg[200];
+        // Exec unit of time and log
         syscall(GET_TIME, &start_sec, &start_nsec);
         for (int cou = 0; cou < proc.t_exec; cou++) UNI_T(); // wait
         syscall(GET_TIME, &end_sec, &end_nsec);
