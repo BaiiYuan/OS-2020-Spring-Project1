@@ -5,6 +5,7 @@
 #include <string.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include "process.h"
 
 static int cur_proc;
@@ -12,7 +13,7 @@ static int t_total;
 static int finish_n_proc;
 static int t_last;
 
-int set_next_process(int policy_id, int n_proc, Process *proc) {
+int get_next_process(int policy_id, int n_proc, Process *proc) {
     switch(policy_id) {
         case _FIFO:
             if (cur_proc != -1) return cur_proc;
@@ -47,11 +48,11 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
     finish_n_proc = 0;
 
     while (1 == 1) {
-        fprintf(stderr, "Current time: %d\n", t_total);
+        // fprintf(stderr, "Current time: %d\n", t_total);
 
         if (cur_proc != -1 && proc[cur_proc].exec_time == 0) {
+            fprintf(stderr, "%s finish at time %d.\n", proc[cur_proc].name, t_total);
             waitpid(proc[cur_proc].pid, NULL, 0);
-            printf("%s %d\n", proc[cur_proc].name, proc[cur_proc].pid);
             cur_proc = -1;
             finish_n_proc++;
 
@@ -60,15 +61,15 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
 
         // Check the process is ready or not
         for (int i = 0; i < n_proc; i++) {
-            if (proc[i].ready_time == n_time) {
+            if (proc[i].ready_time == t_total) {
                 proc[i].pid = exec(proc[i]);
                 block(proc[i].pid);
-                fprintf(stderr, "%s ready at time %d.\n", proc[i].name, n_time);
+                fprintf(stderr, "%s ready at time %d.\n", proc[i].name, t_total);
             }
         }
 
         // Find next running process
-        int next_proc = next_process(proc, n_proc, policy_id);
+        int next_proc = get_next_process(policy_id, n_proc, proc);
         if (next_proc != -1 && next_proc != cur_proc) {
             wakeup(proc[next_proc].pid);
             block(proc[cur_proc].pid);
@@ -88,26 +89,26 @@ int cmp_proc(const void *a,const void *b){
     return ((Process *)a)->ready_time - ((Process *)b)->ready_time;
 }
 
-int read_input(int *n_proc, Process *proc) {
+Process *read_input(int *policy, int *n_proc) {
     char sched_policy[16];
     scanf("%s\n%d\n", sched_policy, n_proc);
     fprintf(stderr, "%s, %d\n", sched_policy, *n_proc);
-
-    proc = (Process*)malloc(*n_proc * sizeof(Process));
+    Process *proc = (Process*)malloc(*n_proc * sizeof(Process));
     for (int i = 0; i < *n_proc; i++) {
         scanf("%s %d %d\n", proc[i].name, &proc[i].ready_time, &proc[i].exec_time);
         proc[i].pid = -1;
     }
     qsort(proc, *n_proc, sizeof(Process), cmp_proc);
 
-    if (strcmp(sched_policy, "FIFO") == 0) return _FIFO;
-    else if (strcmp(sched_policy, "RR") == 0) return _RR;
-    else if (strcmp(sched_policy, "SJF") == 0) return _SJF;
-    else if (strcmp(sched_policy, "PSJF") == 0) return _PSJF;
+    if (strcmp(sched_policy, "FIFO") == 0) *policy = _FIFO;
+    else if (strcmp(sched_policy, "RR") == 0) *policy = _RR;
+    else if (strcmp(sched_policy, "SJF") == 0) *policy = _SJF;
+    else if (strcmp(sched_policy, "PSJF") == 0) *policy = _PSJF;
     else {
         fprintf(stderr, "Invalid policy: %s", sched_policy);
         exit(0);
     }
+    return proc;
 }
 
 void test_sys_call() {
@@ -120,11 +121,13 @@ void test_sys_call() {
 }
 
 int main(int argc, char **argv) {
-    int n_proc;
-    Process *proc_pool;
-    int policy_id = read_input(&n_proc, proc_pool);
+    int n_proc, policy_id;
+    Process *proc_pool = read_input(&policy_id, &n_proc);
     test_sys_call();
 
+    for (int i = 0; i < n_proc; i++) {
+        printf("%s %d %d\n", proc_pool[i].name, proc_pool[i].ready_time, proc_pool[i].exec_time);
+    }
     scheduling(policy_id, n_proc, proc_pool);
     return 0;
 }

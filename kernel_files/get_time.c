@@ -6,5 +6,4 @@ asmlinkage void sys_get_time(long *sec, long *nsec) {
     getnstimeofday(&now);
     *sec = now.tv_sec;
     *nsec = now.tv_nsec;
-    printk("sec:%ld, nsec:%ld\n", now.tv_sec, now.tv_nsec);
 }
