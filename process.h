@@ -15,8 +15,8 @@
 
 typedef struct process {
     char name[64];
-    int t_ready;
-    int t_exec;
+    int ready_time;
+    int exec_time;
     pid_t pid;
 }Process;
 

@@ -7,22 +7,74 @@
 #include <sys/types.h>
 #include "process.h"
 
-static int t_last;
-static int t_total;
 static int cur_proc;
-static int finish_cnt;
+static int t_total;
+static int finish_n_proc;
+static int t_last;
+
+int set_next_process(int policy_id, int n_proc, Process *proc) {
+    switch(policy_id) {
+        case _FIFO:
+            if (cur_proc != -1) return cur_proc;
+
+            for(int i = 0; i < n_proc; i++) { // Directly find next in sorted proc
+                if(proc[i].pid == -1 || proc[i].t_exec == 0) {
+                    continue;
+                }
+                return i;
+            }
+            break;
+        case _RR:
+            break;
+        case _SJF:
+            if (cur_proc != -1) return cur_proc;
+            break;
+        case _PSJF:
+            break;
+    }
+    return -1;
+}
 
 
-int scheduling(int policy_id, int n_proc, Process *proc) {
+void scheduling(int policy_id, int n_proc, Process *proc) {
     int sched_pid = getpid();
     assign_cpu(sched_pid, 0);
     int ret = wakeup(sched_pid);
     printf("pid: %d, ret: %i\n", sched_pid, ret);
 
+    cur_proc = -1;
+    t_total = 0;
+    finish_n_proc = 0;
+
     while (true) {
+        fprintf(stderr, "Current time: %d\n", t_total);
+
+        if (cur_proc != -1 && proc[cur_proc].exec_time == 0) {
+            waitpid(proc[cur_proc].pid, NULL, 0);
+            printf("%s %d\n", proc[cur_proc].name, proc[cur_proc].pid);
+            cur_proc = -1;
+            finish_n_proc++;
+
+            if (finish_n_proc == nproc) break; // End!
+        }
+
         // Check the process is ready or not
+        for (int i = 0; i < n_proc; i++) {
+            if (proc[i].ready_time == ntime) {
+                proc[i].pid = exec(proc[i]);
+                block(proc[i].pid);
+                fprintf(stderr, "%s ready at time %d.\n", proc[i].name, ntime);
+            }
+        }
 
         // Find next running process
+        int next_proc = next_process(proc, nproc, policy);
+        if (next_proc != -1 && next_proc != cur_proc) {
+            proc_wakeup(proc[next_proc].pid);
+            proc_block(proc[cur_proc].pid);
+            cur_proc = next_proc;
+            t_last = t_total;
+        }
 
 
         // Run unit of time
@@ -30,11 +82,10 @@ int scheduling(int policy_id, int n_proc, Process *proc) {
         if (cur_proc != -1) proc[cur_proc].t_exex -= 1;
         t_total ++;
     }
-    return 0;
 }
 
 int cmp_proc(const void *a,const void *b){
-    return ((Process *)a)->t_ready - ((Process *)b)->t_ready;
+    return ((Process *)a)->ready_time - ((Process *)b)->ready_time;
 }
 
 int read_input(int *n_proc, Process *proc) {
@@ -44,7 +95,7 @@ int read_input(int *n_proc, Process *proc) {
 
     proc = (Process*)malloc(*n_proc * sizeof(Process));
     for (int i = 0; i < *n_proc; i++) {
-        scanf("%s %d %d\n", proc[i].name, &proc[i].t_ready, &proc[i].t_exec);
+        scanf("%s %d %d\n", proc[i].name, &proc[i].ready_time, &proc[i].exec_time);
         proc[i].pid = -1;
     }
     qsort(proc, *n_proc, sizeof(Process), cmp_proc);
