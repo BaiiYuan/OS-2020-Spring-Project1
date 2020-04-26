@@ -9,9 +9,9 @@
 #include "process.h"
 
 static int cur_proc;
-static int t_total;
+static int total_time;
+static int last_time;
 static int finish_n_proc;
-static int t_last;
 
 int get_next_process(int policy_id, int n_proc, Process *proc) {
     switch(policy_id) {
@@ -26,11 +26,35 @@ int get_next_process(int policy_id, int n_proc, Process *proc) {
             }
             break;
         case _RR:
+            if ((total_time - last_time) % 500 == 0)  {
+                int ret = (cur_proc + 1) % n_proc;
+                while (proc[ret].pid == -1 || proc[ret].exec_time == 0)
+                    ret = (ret + 1) % n_proc;
+                return ret;
+            } else if (cur_proc != -1) {
+                return cur_proc;
+            } else {
+                for (int i = 0; i < n_proc; i++) {
+                    if(proc[i].pid == -1 || proc[i].exec_time == 0) {
+                        continue;
+                    }
+                    return i;
+                }
+            }
             break;
         case _SJF:
             if (cur_proc != -1) return cur_proc;
-            break;
+            // And then fall through PSJF
         case _PSJF:
+            int ret = -1;
+            for(int i = 0; i < n_proc; i++) { // Directly find next in sorted proc
+                if(proc[i].pid == -1 || proc[i].exec_time == 0) {
+                    continue;
+                }
+                if (ret == -1 || proc[i].exec_time < proc[ret].exec_time)
+                    ret = i;
+            }
+            return ret;
             break;
     }
     return -1;
@@ -44,14 +68,13 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
     printf("pid: %d, ret: %i\n", sched_pid, ret);
 
     cur_proc = -1;
-    t_total = 0;
+    total_time = 0;
     finish_n_proc = 0;
 
     while (1 == 1) {
-        // fprintf(stderr, "Current time: %d\n", t_total);
-
+        // Check finished process
         if (cur_proc != -1 && proc[cur_proc].exec_time == 0) {
-            fprintf(stderr, "%s finish at time %d.\n", proc[cur_proc].name, t_total);
+            fprintf(stderr, "%s finish at time %d.\n", proc[cur_proc].name, total_time);
             waitpid(proc[cur_proc].pid, NULL, 0);
             cur_proc = -1;
             finish_n_proc++;
@@ -59,12 +82,12 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
             if (finish_n_proc == n_proc) break; // End!
         }
 
-        // Check the process is ready or not
+        // Check processes are ready or not
         for (int i = 0; i < n_proc; i++) {
-            if (proc[i].ready_time == t_total) {
+            if (proc[i].ready_time == total_time) {
                 proc[i].pid = exec(proc[i]);
                 block(proc[i].pid);
-                fprintf(stderr, "%s ready at time %d.\n", proc[i].name, t_total);
+                fprintf(stderr, "%s ready at time %d.\n", proc[i].name, total_time);
             }
         }
 
@@ -74,14 +97,14 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
             wakeup(proc[next_proc].pid);
             block(proc[cur_proc].pid);
             cur_proc = next_proc;
-            t_last = t_total;
+            last_time = total_time;
         }
 
 
         // Run unit of time
         UNI_T();
+        total_time ++;
         if (cur_proc != -1) proc[cur_proc].exec_time -= 1;
-        t_total ++;
     }
 }
 
@@ -112,7 +135,7 @@ Process *read_input(int *policy, int *n_proc) {
 }
 
 void test_sys_call() {
-    syscall(LOG_INFO, "GGininder");
+    syscall(LOG_INFO, "GGininder\n");
     long start_sec, start_nsec, end_sec, end_nsec;
     syscall(GET_TIME, &start_sec, &start_nsec);
     UNI_T();
