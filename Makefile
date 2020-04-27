@@ -6,5 +6,6 @@ process.o: process.c process.h
 	gcc -c process.c
 clean:
 	rm -rf *o
+	rm -f main
 run:
 	sudo ./main
