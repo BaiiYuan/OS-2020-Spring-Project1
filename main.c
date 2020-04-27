@@ -83,7 +83,7 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
             waitpid(proc[cur_proc].pid, NULL, 0);
 
 #ifdef DEBUG
-            fprintf(stderr, "%s finish at time %d.\n", proc[cur_proc].name, total_time);
+            fprintf(stderr, "%s(%d) finish at time %d.\n", proc[cur_proc].name, cur_proc, total_time);
 #endif
 
             prev_proc = cur_proc;
@@ -100,7 +100,7 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
                 fprintf(stdout, "%s %d\n", proc[i].name, proc[i].pid);
                 fflush(stdout);
 #ifdef DEBUG
-                fprintf(stderr, "%s ready at time %d.\n", proc[i].name, total_time);
+                fprintf(stderr, "%s(%d) ready at time %d.\n", proc[i].name, i, total_time);
 #endif
             }
         }
@@ -111,7 +111,9 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
             block(proc[cur_proc].pid);
 
 #ifdef DEBUG
-            fprintf(stderr, "Process context switch from %s to %s at time %d.\n", proc[cur_proc].name, proc[next_proc].name, total_time);
+            fprintf(stderr, "Process context switch from %s(%d) to %s(%d) at time %d.\n",
+                    proc[cur_proc].name, cur_proc,
+                    proc[next_proc].name, next_proc, total_time);
 #endif
 
             cur_proc = next_proc;
