@@ -14,7 +14,7 @@ static int total_time;
 static int last_time;
 static int finish_n_proc;
 
-#define DEBUG
+// #define DEBUG
 
 Process *read_input(int *policy, int *n_proc);
 void scheduling(int policy_id, int n_proc, Process *proc) ;
@@ -71,10 +71,6 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
     assign_cpu(sched_pid, 0);
     int ret = wakeup(sched_pid);
 
-#ifdef DEBUG
-    printf("pid: %d, ret: %i\n", sched_pid, ret);
-#endif
-
     cur_proc = -1;
     prev_proc = -1;
     last_time = 0;
@@ -101,6 +97,7 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
             if (proc[i].ready_time == total_time) {
                 proc[i].pid = exec(proc[i]);
                 block(proc[i].pid);
+                fprintf(stderr, "%d %d\n", proc[i].name, proc[i].pid);
 #ifdef DEBUG
                 fprintf(stderr, "%s ready at time %d.\n", proc[i].name, total_time);
 #endif
