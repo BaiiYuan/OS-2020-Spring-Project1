@@ -41,17 +41,17 @@ int get_next_process(int policy_id, int n_proc, Process *proc) {
             for(int i = 0; i < n_proc; i++) { // Directly find next in sorted proc
                 if(proc[i].pid == -1 || proc[i].exec_time == 0) { continue; }
                 return i;
-            } break;
+            } return -1;
         case _RR:
             if (cur_proc == -1 || (total_time - last_time) / 500 >= 1) {
                 ret = (cur_proc == -1) ? (prev_proc + 1) % n_proc : (cur_proc + 1) % n_proc;
                 for(int i = ret; i < n_proc + ret; i++) {
                     if(proc[i % n_proc].pid == -1 || proc[i % n_proc].exec_time == 0) { continue; }
                     return i;
-                } break;
+                }
             } else {
                 return cur_proc;
-            } break;
+            } return -1;
         case _SJF:
             if (cur_proc != -1) { return cur_proc; }
             // And then fall through PSJF
@@ -62,9 +62,8 @@ int get_next_process(int policy_id, int n_proc, Process *proc) {
                 if (ret == -1 || proc[i].exec_time < proc[ret].exec_time) {
                     ret = i;
                 }
-            } break;
-    }
-    return -1;
+            } return -1;
+    } return -1;
 }
 
 void scheduling(int policy_id, int n_proc, Process *proc) {
