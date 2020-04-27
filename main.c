@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
 
 #ifdef DEBUG
     for (int i = 0; i < n_proc; i++) {
-        printf("%s %d %d\n", proc_pool[i].name, proc_pool[i].ready_time, proc_pool[i].exec_time);
+        fprintf(stderr, "%s %d %d\n", proc_pool[i].name, proc_pool[i].ready_time, proc_pool[i].exec_time);
     }
 #endif
 
@@ -157,5 +157,5 @@ Process *read_input(int *policy, int *n_proc) {
 //     syscall(GET_TIME, &start_sec, &start_nsec);
 //     UNI_T();
 //     syscall(GET_TIME, &end_sec, &end_nsec);
-//     printf("Start:%ld-%ld, End:%ld-%ld\n", start_sec, start_nsec, end_sec, end_nsec);
+//     fprintf(stderr, "Start:%ld-%ld, End:%ld-%ld\n", start_sec, start_nsec, end_sec, end_nsec);
 // }
