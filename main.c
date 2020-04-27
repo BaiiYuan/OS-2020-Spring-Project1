@@ -45,9 +45,10 @@ int get_next_process(int policy_id, int n_proc, Process *proc) {
         case _RR:
             if (cur_proc == -1 || (total_time - last_time) / 500 >= 1) {
                 ret = (cur_proc == -1) ? (prev_proc + 1) % n_proc : (cur_proc + 1) % n_proc;
-                while (proc[ret].pid == -1 || proc[ret].exec_time == 0) {
-                    ret = (ret + 1) % n_proc;
-                } return ret;
+                for(int i = ret; i < n_proc + ret; i++) {
+                    if(proc[i % n_proc].pid == -1 || proc[i % n_proc].exec_time == 0) { continue; }
+                    return i;
+                } break;
             } else {
                 return cur_proc;
             } break;
@@ -61,7 +62,7 @@ int get_next_process(int policy_id, int n_proc, Process *proc) {
                 if (ret == -1 || proc[i].exec_time < proc[ret].exec_time) {
                     ret = i;
                 }
-            } return ret;
+            } break;
     }
     return -1;
 }
