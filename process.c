@@ -40,6 +40,7 @@ int exec(Process proc) {
         for (int cou = 0; cou < proc.exec_time; cou++) UNI_T(); // wait
         syscall(GET_TIME, &end_sec, &end_nsec);
         sprintf(to_dmesg, "[project1] %d %lu.%09lu %lu.%09lu\n", getpid(), start_sec, start_nsec, end_sec, end_nsec);
+        fprintf(stderr, "[project1] %d %lu.%09lu %lu.%09lu\n", getpid(), start_sec, start_nsec, end_sec, end_nsec);
         syscall(LOG_INFO, to_dmesg);
         exit(0);
     }
