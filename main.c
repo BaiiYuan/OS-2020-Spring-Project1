@@ -33,11 +33,11 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-bool is_process_ready(Process proc) {
+int is_process_ready(Process proc) {
     if(proc.pid == -1 || proc.exec_time == 0) {
-        return false;
+        return 0;
     } else {
-        return true;
+        return 1;
     }
 }
 
@@ -59,7 +59,7 @@ int get_next_process(int policy_id, int n_proc, Process *proc) {
                         return i;
                     }
                 }
-            } return cur_proc
+            } return cur_proc;
         case _SJF:
             if (cur_proc != -1) { return cur_proc; }
             // And then fall through PSJF
