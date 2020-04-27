@@ -129,13 +129,13 @@ int cmp_proc(const void *a,const void *b){
 
 Process *read_input(int *policy, int *n_proc) {
     char sched_policy[16];
-    scanf("%s\n%d\n", sched_policy, n_proc);
+    fscanf(stdin, "%s\n%d\n", sched_policy, n_proc);
 #ifdef DEBUG
     fprintf(stderr, "%s, %d\n", sched_policy, *n_proc);
 #endif
     Process *proc = (Process*)malloc(*n_proc * sizeof(Process));
     for (int i = 0; i < *n_proc; i++) {
-        scanf("%s %d %d\n", proc[i].name, &proc[i].ready_time, &proc[i].exec_time);
+        fscanf(stdin, "%s %d %d\n", proc[i].name, &proc[i].ready_time, &proc[i].exec_time);
         proc[i].pid = -1;
     }
     qsort(proc, *n_proc, sizeof(Process), cmp_proc);
