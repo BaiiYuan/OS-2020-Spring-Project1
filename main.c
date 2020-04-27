@@ -94,6 +94,7 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
         // Find next running process
         int next_proc = get_next_process(policy_id, n_proc, proc);
         if (next_proc != -1 && next_proc != cur_proc) {
+            fprintf(stderr, "Process context switch from %s to %s at time %d.\n", proc[cur_proc].name, proc[next_proc].name, total_time);
             wakeup(proc[next_proc].pid);
             block(proc[cur_proc].pid);
             cur_proc = next_proc;
