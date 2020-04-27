@@ -97,7 +97,7 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
             if (proc[i].ready_time == total_time) {
                 proc[i].pid = exec(proc[i]);
                 block(proc[i].pid);
-                printf("%s %d\n", proc[i].name, proc[i].pid);
+                fprintf(stdout, "%s %d\n", proc[i].name, proc[i].pid);
 #ifdef DEBUG
                 fprintf(stderr, "%s ready at time %d.\n", proc[i].name, total_time);
 #endif
