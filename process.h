@@ -18,7 +18,7 @@ typedef struct process {
     int ready_time;
     int exec_time;
     pid_t pid;
-}Process;
+} Process;
 
 int assign_cpu(int pid, int core);
 int exec(Process proc);
@@ -26,4 +26,3 @@ int block(int pid);
 int wakeup(int pid);
 
 #endif
-
