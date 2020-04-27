@@ -98,6 +98,7 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
                 proc[i].pid = exec(proc[i]);
                 block(proc[i].pid);
                 fprintf(stdout, "%s %d\n", proc[i].name, proc[i].pid);
+                fflush(stdout);
 #ifdef DEBUG
                 fprintf(stderr, "%s ready at time %d.\n", proc[i].name, total_time);
 #endif
