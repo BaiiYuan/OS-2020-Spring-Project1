@@ -56,7 +56,7 @@ int get_next_process(int policy_id, int n_proc, Process *proc) {
                 ret = (cur_proc == -1) ? (prev_proc + 1) % n_proc : (cur_proc + 1) % n_proc;
                 for(int i = ret; i < n_proc + ret; i++) {
                     if(is_process_ready(proc[i % n_proc])) {
-                        return i;
+                        return i % n_proc;
                     }
                 }
             } return cur_proc;
@@ -71,7 +71,7 @@ int get_next_process(int policy_id, int n_proc, Process *proc) {
                 if (ret == -1 || proc[i].exec_time < proc[ret].exec_time) {
                     ret = i;
                 }
-            } return -1;
+            } return ret;
     } return -1;
 }
 

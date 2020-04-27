@@ -1,4 +1,3 @@
-rm -rf output
 mkdir output
 # make
 policy=("FIFO" "RR" "SJF" "PSJF" )
