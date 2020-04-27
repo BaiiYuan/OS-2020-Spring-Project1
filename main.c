@@ -17,6 +17,7 @@ Process *read_input(int *policy, int *n_proc);
 void scheduling(int policy_id, int n_proc, Process *proc) ;
 
 int main(int argc, char **argv) {
+    syscall(LOG_INFO, "-------- Split Line -------\n");
     int n_proc, policy_id;
     Process *proc_pool = read_input(&policy_id, &n_proc);
     for (int i = 0; i < n_proc; i++) {
@@ -27,6 +28,7 @@ int main(int argc, char **argv) {
 }
 
 int get_next_process(int policy_id, int n_proc, Process *proc) {
+    int ret = -1;
     switch(policy_id) {
         case _FIFO:
             if (cur_proc != -1) { return cur_proc; }
@@ -41,7 +43,7 @@ int get_next_process(int policy_id, int n_proc, Process *proc) {
                     return i;
                 }
             } else if ((total_time - last_time) / 500 >= 1)  {
-                int ret = (cur_proc + 1) % n_proc;
+                ret = (cur_proc + 1) % n_proc;
                 while (proc[ret].pid == -1 || proc[ret].exec_time == 0) {
                     ret = (ret + 1) % n_proc;
                 } return ret;
@@ -52,7 +54,7 @@ int get_next_process(int policy_id, int n_proc, Process *proc) {
             if (cur_proc != -1) { return cur_proc; }
             // And then fall through PSJF
         case _PSJF:
-            int ret = -1;
+            ret = -1;
             for(int i = 0; i < n_proc; i++) { // Directly find next in sorted proc
                 if(proc[i].pid == -1 || proc[i].exec_time == 0) { continue; }
                 if (ret == -1 || proc[i].exec_time < proc[ret].exec_time) {
