@@ -1,14 +1,9 @@
-CFLAG = #-DDEBUG -Wall -std=c99
-
 all: main.o process.o
-	gcc $(CFLAG) main.o process.o -o main
-
+	gcc main.o process.o -o main
 main.o: main.c process.o
-	gcc $(CFLAG) -c main.c
-
+	gcc -c main.c
 process.o: process.c process.h
-	gcc $(CFLAG) -c process.c 
-
+	gcc -c process.c 
 clean:
 	rm -rf *o
 run:
