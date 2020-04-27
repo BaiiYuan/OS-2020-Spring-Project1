@@ -9,6 +9,7 @@
 #include "process.h"
 
 static int cur_proc;
+static int prev_proc;
 static int total_time;
 static int last_time;
 static int finish_n_proc;
@@ -38,7 +39,7 @@ int get_next_process(int policy_id, int n_proc, Process *proc) {
             } break;
         case _RR:
             if (cur_proc == -1 || (total_time - last_time) / 500 >= 1) {
-                ret = (cur_proc + 1) % n_proc;
+                ret = (prev_proc + 1) % n_proc;
                 while (proc[ret].pid == -1 || proc[ret].exec_time == 0) {
                     ret = (ret + 1) % n_proc;
                 } return ret;
@@ -67,6 +68,8 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
     printf("pid: %d, ret: %i\n", sched_pid, ret);
 
     cur_proc = -1;
+    prev_proc = -1;
+    last_time = 0;
     total_time = 0;
     finish_n_proc = 0;
 
@@ -75,6 +78,7 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
         if (cur_proc != -1 && proc[cur_proc].exec_time == 0) {
             fprintf(stderr, "%s finish at time %d.\n", proc[cur_proc].name, total_time);
             waitpid(proc[cur_proc].pid, NULL, 0);
+            prev_proc = cur_proc
             cur_proc = -1;
             finish_n_proc++;
 
