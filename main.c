@@ -78,7 +78,7 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
         if (cur_proc != -1 && proc[cur_proc].exec_time == 0) {
             fprintf(stderr, "%s finish at time %d.\n", proc[cur_proc].name, total_time);
             waitpid(proc[cur_proc].pid, NULL, 0);
-            prev_proc = cur_proc
+            prev_proc = cur_proc;
             cur_proc = -1;
             finish_n_proc++;
 
