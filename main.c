@@ -37,12 +37,7 @@ int get_next_process(int policy_id, int n_proc, Process *proc) {
                 return i;
             } break;
         case _RR:
-            if (cur_proc == -1) {
-                for (int i = 0; i < n_proc; i++) {
-                    if(proc[i].pid == -1 || proc[i].exec_time == 0) { continue; }
-                    return i;
-                }
-            } else if ((total_time - last_time) / 500 >= 1)  {
+            if (cur_proc == -1 || (total_time - last_time) / 500 >= 1) {
                 ret = (cur_proc + 1) % n_proc;
                 while (proc[ret].pid == -1 || proc[ret].exec_time == 0) {
                     ret = (ret + 1) % n_proc;
