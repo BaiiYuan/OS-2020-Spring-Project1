@@ -14,16 +14,21 @@ static int total_time;
 static int last_time;
 static int finish_n_proc;
 
+#define DEBUG
+
 Process *read_input(int *policy, int *n_proc);
 void scheduling(int policy_id, int n_proc, Process *proc) ;
 
 int main(int argc, char **argv) {
-    syscall(LOG_INFO, "-------- Split Line -------\n");
     int n_proc, policy_id;
     Process *proc_pool = read_input(&policy_id, &n_proc);
+
+#ifdef DEBUG
     for (int i = 0; i < n_proc; i++) {
         printf("%s %d %d\n", proc_pool[i].name, proc_pool[i].ready_time, proc_pool[i].exec_time);
     }
+#endif
+
     scheduling(policy_id, n_proc, proc_pool);
     return 0;
 }
@@ -65,7 +70,10 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
     int sched_pid = getpid();
     assign_cpu(sched_pid, 0);
     int ret = wakeup(sched_pid);
+
+#ifdef DEBUG
     printf("pid: %d, ret: %i\n", sched_pid, ret);
+#endif
 
     cur_proc = -1;
     prev_proc = -1;
@@ -76,8 +84,12 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
     while (1 == 1) {
         // Check finished process
         if (cur_proc != -1 && proc[cur_proc].exec_time == 0) {
-            fprintf(stderr, "%s finish at time %d.\n", proc[cur_proc].name, total_time);
             waitpid(proc[cur_proc].pid, NULL, 0);
+
+#ifdef DEBUG
+            fprintf(stderr, "%s finish at time %d.\n", proc[cur_proc].name, total_time);
+#endif
+
             prev_proc = cur_proc;
             cur_proc = -1;
             finish_n_proc++;
@@ -89,15 +101,21 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
             if (proc[i].ready_time == total_time) {
                 proc[i].pid = exec(proc[i]);
                 block(proc[i].pid);
+#ifdef DEBUG
                 fprintf(stderr, "%s ready at time %d.\n", proc[i].name, total_time);
+#endif
             }
         }
         // Find next running process
         int next_proc = get_next_process(policy_id, n_proc, proc);
         if (next_proc != -1 && next_proc != cur_proc) {
-            fprintf(stderr, "Process context switch from %s to %s at time %d.\n", proc[cur_proc].name, proc[next_proc].name, total_time);
             wakeup(proc[next_proc].pid);
             block(proc[cur_proc].pid);
+
+#ifdef DEBUG
+            fprintf(stderr, "Process context switch from %s to %s at time %d.\n", proc[cur_proc].name, proc[next_proc].name, total_time);
+#endif
+
             cur_proc = next_proc;
             last_time = total_time;
         }
@@ -115,7 +133,9 @@ int cmp_proc(const void *a,const void *b){
 Process *read_input(int *policy, int *n_proc) {
     char sched_policy[16];
     scanf("%s\n%d\n", sched_policy, n_proc);
+#ifdef DEBUG
     fprintf(stderr, "%s, %d\n", sched_policy, *n_proc);
+#endif
     Process *proc = (Process*)malloc(*n_proc * sizeof(Process));
     for (int i = 0; i < *n_proc; i++) {
         scanf("%s %d %d\n", proc[i].name, &proc[i].ready_time, &proc[i].exec_time);
