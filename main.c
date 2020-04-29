@@ -164,9 +164,9 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
             wakeup(proc[next_proc].pid);
             block(proc[cur_proc].pid);
 
-            if ( proc[cur_proc].is_start == 0) {
-                syscall(GET_TIME, &proc[cur_proc].start_sec, &proc[cur_proc].start_nsec);
-                proc[cur_proc].is_start = 1;
+            if ( proc[next_proc].is_start == 0) {
+                syscall(GET_TIME, &proc[next_proc].start_sec, &proc[next_proc].start_nsec);
+                proc[next_proc].is_start = 1;
             }
 
 #ifdef DEBUG
