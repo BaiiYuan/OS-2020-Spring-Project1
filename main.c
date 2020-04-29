@@ -48,6 +48,7 @@ void enqueue(int value) {
         if (insert_point.next == NULL) {
             insert_point.next = (Queue*)malloc(sizeof(Queue));
             insert_point.next.value = value;
+            insert_point.next.next = NULL;
             break;
         } else {
             insert_point = insert_point->next;
@@ -111,6 +112,7 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
     last_time = 0;
     total_time = 0;
     finish_n_proc = 0;
+    ready_queue = NULL;
 
     while (1 == 1) {
         // Check finished process

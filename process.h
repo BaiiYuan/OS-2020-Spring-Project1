@@ -21,7 +21,7 @@ typedef struct process {
 } Process;
 
 typedef struct queue {
-    struct queue *next = NULL;
+    struct queue *next;
     int value;
 } Queue;
 
