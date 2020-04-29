@@ -1,6 +1,11 @@
-from IPython import embed
+T_UNIT = 1363665.6302
 
-T_UNIT = 1339411.1138
+def diff_time(a, b):
+    a_sec, a_nsec = a.split(".")
+    b_sec, b_nsec = b.split(".")
+    a_sec, a_nsec = int(a_sec), int(a_nsec)
+    b_sec, b_nsec = int(b_sec), int(b_nsec)
+    return (a_sec - b_sec) * 1e9 + (a_nsec - b_nsec)
 
 for p in ["FIFO", "RR", "SJF", "PSJF"]:
     for i in range(1, 6):
@@ -18,6 +23,11 @@ for p in ["FIFO", "RR", "SJF", "PSJF"]:
             if int(start_time) < min_value:
                 min_name = name
                 min_value = int(start_time)
+                min_exec = int(exec_time)
+            elif int(start_time) == min_value and p in ["SJF", "PSJF"] and int(exec_time) < min_exec:
+                min_name = name
+                min_value = int(start_time)
+                min_exec = int(exec_time)
 
         f_out = open(f"output/{p}_{i}_stdout.txt")
         content = f_out.read().strip().split("\n")
@@ -29,16 +39,16 @@ for p in ["FIFO", "RR", "SJF", "PSJF"]:
         content = f_dmes.read().strip().split("\n")
         for item in content:
             pid, start_time, end_time = item.split("[Project1]")[1].split()
-            pid2_time[pid] = (int(start_time.replace('.','')), int(end_time.replace('.','')))
+            pid2_time[pid] = (start_time, end_time)
 
-        base_time = pid2_time[name2pid[min_name]][0] - min_value * T_UNIT
+        base_time = pid2_time[name2pid[min_name]][0]
 
         f_dmes = open(f"output/{p}_{i}_dmesg.txt")
         content = f_dmes.read().strip().split("\n")
         for item in content:
             pid, start_time, end_time = item.split("[Project1]")[1].split()
-            pid2_time[pid] = (int((int(start_time.replace('.','')) - base_time) // T_UNIT),
-                              int((int(end_time.replace('.','')) - base_time) // T_UNIT))
+            pid2_time[pid] = (int(diff_time(start_time, base_time) // T_UNIT + min_value),
+                              int(diff_time(end_time, base_time) // T_UNIT + min_value))
 
         print(f"---------- {policy} {i} ----------")
         for name in order:
