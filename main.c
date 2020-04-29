@@ -115,7 +115,7 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
                 block(proc[i].pid);
                 fprintf(stdout, "%s %d\n", proc[i].name, proc[i].pid);
                 fflush(stdout);
-                syscall(GET_TIME, &proc[cur_proc].start_sec, &proc[cur_proc].start_nsec);
+                syscall(GET_TIME, &proc[i].start_sec, &proc[i].start_nsec);
 #ifdef DEBUG
                 fprintf(stderr, "%s(%d) ready at time %d.\n", proc[i].name, i, total_time);
 #endif
