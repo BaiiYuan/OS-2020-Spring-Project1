@@ -1,5 +1,3 @@
-from IPython import embed
-
 f_dmes = open(f"output/TIME_MEASUREMENT_dmesg.txt")
 content = f_dmes.read().strip().split("\n")
 record = []

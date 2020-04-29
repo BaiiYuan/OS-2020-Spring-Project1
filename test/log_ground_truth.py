@@ -64,7 +64,7 @@ def scheduling(policy, n_proc, proc):
     finish_n_proc = 0
     ready_queue = []
 
-    record = [[0, 0] for _ in range(n_proc)]
+    record = [[-1, -1] for _ in range(n_proc)]
     while True:
         # print(f"{total_time}\r", end="")
         # Check finished process
@@ -81,11 +81,12 @@ def scheduling(policy, n_proc, proc):
             if proc[i]["ready_time"] == total_time:
                 proc[i]["pid"] = 666
                 ready_queue.append(i)
-                record[i][0] = total_time
 
         # Find next running process
         next_proc = get_next_process(policy, n_proc, proc)
         if next_proc != -1 and next_proc != cur_proc:
+            if record[next_proc][0] == -1:
+                record[next_proc][0] = total_time
             cur_proc = next_proc
             last_time = total_time
 
