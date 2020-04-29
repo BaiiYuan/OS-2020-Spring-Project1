@@ -15,7 +15,7 @@ static int last_time;
 static int finish_n_proc;
 static Queue *ready_queue;
 
-#define DEBUG
+// #define DEBUG
 
 Process *read_input(int *policy, int *n_proc);
 void scheduling(int policy_id, int n_proc, Process *proc) ;
