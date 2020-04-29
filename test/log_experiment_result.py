@@ -1,6 +1,6 @@
 from IPython import embed
 
-T_UNIT = 1280930.9722
+T_UNIT = 1339411.1138
 
 for p in ["FIFO", "RR", "SJF", "PSJF"]:
     for i in range(1, 6):
@@ -37,8 +37,8 @@ for p in ["FIFO", "RR", "SJF", "PSJF"]:
         content = f_dmes.read().strip().split("\n")
         for item in content:
             pid, start_time, end_time = item.split("[Project1]")[1].split()
-            pid2_time[pid] = (int((int(start_time.replace('.','')) - base_time) // T_UNIT) + min_value,
-                              int((int(end_time.replace('.','')) - base_time) // T_UNIT) + min_value)
+            pid2_time[pid] = (int((int(start_time.replace('.','')) - base_time) // T_UNIT),
+                              int((int(end_time.replace('.','')) - base_time) // T_UNIT))
 
         print(f"---------- {policy} {i} ----------")
         for name in order:

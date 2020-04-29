@@ -40,9 +40,9 @@ P5 -> start from 0 to 2500
 P1 -> start from 600 to 8100
 P2 -> start from 800 to 9600
 ---------- RR 3 ----------
-P1 -> start from 1200 to 22200
-P2 -> start from 2400 to 20400
-P3 -> start from 3600 to 17900
+P1 -> start from 1200 to 20700
+P2 -> start from 2400 to 19900
+P3 -> start from 3600 to 18900
 P4 -> start from 4800 to 31200
 P5 -> start from 5200 to 30200
 P6 -> start from 5800 to 28200
@@ -53,15 +53,15 @@ P3 -> start from 300 to 14500
 P4 -> start from 400 to 5500
 P5 -> start from 500 to 6000
 P6 -> start from 500 to 6500
-P7 -> start from 600 to 18000
+P7 -> start from 600 to 18500
 ---------- RR 5 ----------
 P1 -> start from 0 to 23000
 P2 -> start from 200 to 20000
 P3 -> start from 200 to 14500
 P4 -> start from 400 to 5500
 P5 -> start from 400 to 6000
-P6 -> start from 600 to 6500
-P7 -> start from 600 to 18000
+P6 -> start from 600 to 7000
+P7 -> start from 600 to 18500
 ---------- SJF 1 ----------
 P1 -> start from 0 to 14000
 P2 -> start from 0 to 2000

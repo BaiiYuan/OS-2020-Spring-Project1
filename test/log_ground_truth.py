@@ -3,6 +3,7 @@ prev_proc = -1
 last_time = 0
 total_time = 0
 finish_n_proc = 0
+ready_queue = []
 
 
 def is_process_ready(proc):
@@ -12,7 +13,7 @@ def is_process_ready(proc):
         return 1
 
 def get_next_process(policy, n_proc, proc):
-    global cur_proc, prev_proc, last_time, total_time, finish_n_proc
+    global cur_proc, prev_proc, last_time, total_time, finish_n_proc, ready_queue
     ret = -1
     if policy == "FIFO":
         if cur_proc != -1:
@@ -23,10 +24,14 @@ def get_next_process(policy, n_proc, proc):
         return -1
     elif policy == "RR":
         if cur_proc == -1 or (total_time - last_time) / 500 >= 1:
-            ret = (prev_proc + 1) % n_proc if (cur_proc == -1) else (cur_proc + 1) % n_proc
-            for i in range(ret, n_proc + ret):
-                if(is_process_ready(proc[i % n_proc])):
-                    return i % n_proc
+            if len(ready_queue) == 0:
+                return cur_proc
+            else:
+                ret = ready_queue[0]
+                if cur_proc != -1:
+                    ready_queue.append(cur_proc)
+                ready_queue = ready_queue[1:]
+                return ret
         return cur_proc
     elif policy == "SJF":
         if cur_proc != -1:
@@ -50,13 +55,14 @@ def get_next_process(policy, n_proc, proc):
 
 
 def scheduling(policy, n_proc, proc):
-    global cur_proc, prev_proc, last_time, total_time, finish_n_proc
+    global cur_proc, prev_proc, last_time, total_time, finish_n_proc, ready_queue
 
     cur_proc = -1
     prev_proc = -1
     last_time = 0
     total_time = 0
     finish_n_proc = 0
+    ready_queue = []
 
     record = [[0, 0] for _ in range(n_proc)]
     while True:
@@ -74,6 +80,7 @@ def scheduling(policy, n_proc, proc):
         for i in range(n_proc):
             if proc[i]["ready_time"] == total_time:
                 proc[i]["pid"] = 666
+                ready_queue.append(i)
                 record[i][0] = total_time
 
         # Find next running process
