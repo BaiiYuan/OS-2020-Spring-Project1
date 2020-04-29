@@ -13,6 +13,7 @@ static int prev_proc;
 static int total_time;
 static int last_time;
 static int finish_n_proc;
+static Queue *ready_queue;
 
 // #define DEBUG
 
@@ -41,6 +42,29 @@ int is_process_ready(Process proc) {
     }
 }
 
+void enqueue(int value) {
+    Queue *insert_point = ready_queue;
+    while (1 == 1) {
+        if (insert_point.next == NULL) {
+            insert_point.next = (Queue*)malloc(sizeof(Queue));
+            insert_point.next.value = value;
+            break;
+        } else {
+            insert_point = insert_point->next;
+        }
+    }
+}
+
+int dequeue() {
+    if (ready_queue == NULL) {
+        return -1;
+    } else {
+        int tmp = ready_queue.value;
+        ready_queue = ready_queue->next;
+        return tmp;
+    }
+}
+
 int get_next_process(int policy_id, int n_proc, Process *proc) {
     int ret = -1;
     switch(policy_id) {
@@ -53,11 +77,13 @@ int get_next_process(int policy_id, int n_proc, Process *proc) {
             } return -1;
         case _RR:
             if (cur_proc == -1 || (total_time - last_time) / 500 >= 1) {
-                ret = (cur_proc == -1) ? (prev_proc + 1) % n_proc : (cur_proc + 1) % n_proc;
-                for(int i = ret; i < n_proc + ret; i++) {
-                    if(is_process_ready(proc[i % n_proc])) {
-                        return i % n_proc;
-                    }
+                int next = dequeue();
+                if (next == -1) {
+                    return cur_proc;
+                } else {
+                    if (cur_proc != -1) {
+                        enqueue(cur_proc);
+                    } return next;
                 }
             } return cur_proc;
         case _SJF:
@@ -113,6 +139,8 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
             if (proc[i].ready_time == total_time) {
                 proc[i].pid = exec(proc[i]);
                 block(proc[i].pid);
+                enqueue(i);
+
                 fprintf(stdout, "%s %d\n", proc[i].name, proc[i].pid);
                 fflush(stdout);
                 syscall(GET_TIME, &proc[i].start_sec, &proc[i].start_nsec);

@@ -20,6 +20,11 @@ typedef struct process {
     long start_sec, start_nsec, end_sec, end_nsec;
 } Process;
 
+typedef struct queue {
+    Queue *next = NULL;
+    int value;
+} Queue;
+
 int assign_cpu(int pid, int core);
 int exec(Process proc);
 int block(int pid);
