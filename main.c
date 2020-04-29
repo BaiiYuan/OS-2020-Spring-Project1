@@ -47,7 +47,6 @@ void enqueue(int value) {
         ready_queue = (Queue*)malloc(sizeof(Queue));
         ready_queue->value = value;
         ready_queue->next = NULL;
-        printf("ins %d\n", ready_queue->value);
         return;
     }
 
@@ -57,7 +56,6 @@ void enqueue(int value) {
             insert_point->next = (Queue*)malloc(sizeof(Queue));
             insert_point->next->value = value;
             insert_point->next->next = NULL;
-            printf("ins %d\n", insert_point->next->value);
             break;
         } else {
             insert_point = insert_point->next;
@@ -88,7 +86,6 @@ int get_next_process(int policy_id, int n_proc, Process *proc) {
         case _RR:
             if (cur_proc == -1 || (total_time - last_time) / 500 >= 1) {
                 int next = dequeue();
-                printf("%d\n", next);
                 if (next == -1) {
                     return cur_proc;
                 } else {
