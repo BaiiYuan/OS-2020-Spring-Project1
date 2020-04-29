@@ -152,7 +152,7 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
 
                 fprintf(stdout, "%s %d\n", proc[i].name, proc[i].pid);
                 fflush(stdout);
-                syscall(GET_TIME, &proc[i].start_sec, &proc[i].start_nsec);
+
 #ifdef DEBUG
                 fprintf(stderr, "%s(%d) ready at time %d.\n", proc[i].name, i, total_time);
 #endif
@@ -163,6 +163,11 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
         if (next_proc != -1 && next_proc != cur_proc) {
             wakeup(proc[next_proc].pid);
             block(proc[cur_proc].pid);
+
+            if ( proc[cur_proc].is_start == 0) {
+                syscall(GET_TIME, &proc[cur_proc].start_sec, &proc[cur_proc].start_nsec);
+                proc[cur_proc].is_start = 1;
+            }
 
 #ifdef DEBUG
             fprintf(stderr, "Process context switch from %s(%d) to %s(%d) at time %d.\n",
@@ -194,6 +199,7 @@ Process *read_input(int *policy, int *n_proc) {
     for (int i = 0; i < *n_proc; i++) {
         fscanf(stdin, "%s %d %d\n", proc[i].name, &proc[i].ready_time, &proc[i].exec_time);
         proc[i].pid = -1;
+        proc[i].is_start = 0;
     }
     qsort(proc, *n_proc, sizeof(Process), cmp_proc);
 
