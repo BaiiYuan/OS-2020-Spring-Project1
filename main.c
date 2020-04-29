@@ -90,6 +90,13 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
         // Check finished process
         if (cur_proc != -1 && proc[cur_proc].exec_time == 0) {
             waitpid(proc[cur_proc].pid, NULL, 0);
+            syscall(GET_TIME, &proc[cur_proc].end_sec, &proc[cur_proc].end_nsec);
+
+            char to_dmesg[200];
+            sprintf(to_dmesg, "[Project1] %d %lu.%09lu %lu.%09lu\n", proc[cur_proc].pid,
+                    proc[cur_proc].start_sec, proc[cur_proc].start_nsec,
+                    proc[cur_proc].end_sec, proc[cur_proc].end_nsec);
+            syscall(LOG_INFO, to_dmesg);
 
 #ifdef DEBUG
             fprintf(stderr, "%s(%d) finish at time %d.\n", proc[cur_proc].name, cur_proc, total_time);
@@ -108,6 +115,7 @@ void scheduling(int policy_id, int n_proc, Process *proc) {
                 block(proc[i].pid);
                 fprintf(stdout, "%s %d\n", proc[i].name, proc[i].pid);
                 fflush(stdout);
+                syscall(GET_TIME, &proc[cur_proc].start_sec, &proc[cur_proc].start_nsec);
 #ifdef DEBUG
                 fprintf(stderr, "%s(%d) ready at time %d.\n", proc[i].name, i, total_time);
 #endif

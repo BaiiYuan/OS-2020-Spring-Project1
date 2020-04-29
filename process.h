@@ -15,9 +15,9 @@
 
 typedef struct process {
     char name[64];
-    int ready_time;
-    int exec_time;
+    int ready_time, exec_time;
     pid_t pid;
+    long start_sec, start_nsec, end_sec, end_nsec;
 } Process;
 
 int assign_cpu(int pid, int core);
