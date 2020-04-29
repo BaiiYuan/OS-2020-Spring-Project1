@@ -45,10 +45,10 @@ int is_process_ready(Process proc) {
 void enqueue(int value) {
     Queue *insert_point = ready_queue;
     while (1 == 1) {
-        if (insert_point.next == NULL) {
-            insert_point.next = (Queue*)malloc(sizeof(Queue));
-            insert_point.next.value = value;
-            insert_point.next.next = NULL;
+        if (insert_point->next == NULL) {
+            insert_point->next = (Queue*)malloc(sizeof(Queue));
+            insert_point->next->value = value;
+            insert_point->next->next = NULL;
             break;
         } else {
             insert_point = insert_point->next;
@@ -60,7 +60,7 @@ int dequeue() {
     if (ready_queue == NULL) {
         return -1;
     } else {
-        int tmp = ready_queue.value;
+        int tmp = ready_queue->value;
         ready_queue = ready_queue->next;
         return tmp;
     }
