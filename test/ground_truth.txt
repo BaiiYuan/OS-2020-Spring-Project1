@@ -1,0 +1,122 @@
+---------- FIFO 1 ----------
+P1 -> start from 0 to 500
+P2 -> start from 0 to 1000
+P3 -> start from 0 to 1500
+P4 -> start from 0 to 2000
+P5 -> start from 0 to 2500
+---------- FIFO 2 ----------
+P1 -> start from 0 to 80000
+P2 -> start from 100 to 85000
+P3 -> start from 200 to 86000
+P4 -> start from 300 to 87000
+---------- FIFO 3 ----------
+P1 -> start from 0 to 8000
+P2 -> start from 200 to 13000
+P3 -> start from 300 to 16000
+P4 -> start from 400 to 17000
+P5 -> start from 500 to 18000
+P6 -> start from 500 to 19000
+P7 -> start from 600 to 23000
+---------- FIFO 4 ----------
+P1 -> start from 0 to 2000
+P2 -> start from 500 to 2500
+P3 -> start from 500 to 2700
+P4 -> start from 1500 to 3200
+---------- FIFO 5 ----------
+P1 -> start from 0 to 8000
+P2 -> start from 200 to 13000
+P3 -> start from 200 to 16000
+P4 -> start from 400 to 17000
+P5 -> start from 400 to 18000
+P6 -> start from 600 to 19000
+P7 -> start from 600 to 23000
+---------- RR 1 ----------
+P1 -> start from 0 to 500
+P2 -> start from 0 to 1000
+P3 -> start from 0 to 1500
+P4 -> start from 0 to 2000
+P5 -> start from 0 to 2500
+---------- RR 2 ----------
+P1 -> start from 600 to 8100
+P2 -> start from 800 to 9600
+---------- RR 3 ----------
+P1 -> start from 1200 to 22200
+P2 -> start from 2400 to 20400
+P3 -> start from 3600 to 17900
+P4 -> start from 4800 to 31200
+P5 -> start from 5200 to 30200
+P6 -> start from 5800 to 28200
+---------- RR 4 ----------
+P1 -> start from 0 to 23000
+P2 -> start from 200 to 20000
+P3 -> start from 300 to 14500
+P4 -> start from 400 to 5500
+P5 -> start from 500 to 6000
+P6 -> start from 500 to 6500
+P7 -> start from 600 to 18000
+---------- RR 5 ----------
+P1 -> start from 0 to 23000
+P2 -> start from 200 to 20000
+P3 -> start from 200 to 14500
+P4 -> start from 400 to 5500
+P5 -> start from 400 to 6000
+P6 -> start from 600 to 6500
+P7 -> start from 600 to 18000
+---------- SJF 1 ----------
+P1 -> start from 0 to 14000
+P2 -> start from 0 to 2000
+P3 -> start from 100 to 3000
+P4 -> start from 200 to 7000
+---------- SJF 2 ----------
+P1 -> start from 100 to 200
+P2 -> start from 100 to 4400
+P3 -> start from 200 to 400
+P4 -> start from 200 to 8400
+P5 -> start from 200 to 15400
+---------- SJF 3 ----------
+P1 -> start from 100 to 3100
+P2 -> start from 100 to 16120
+P3 -> start from 100 to 23120
+P4 -> start from 200 to 3110
+P5 -> start from 200 to 3120
+P6 -> start from 300 to 7120
+P7 -> start from 400 to 11120
+P8 -> start from 500 to 32120
+---------- SJF 4 ----------
+P1 -> start from 0 to 3000
+P2 -> start from 1000 to 4000
+P3 -> start from 2000 to 8000
+P4 -> start from 5000 to 11000
+P5 -> start from 7000 to 9000
+---------- SJF 5 ----------
+P1 -> start from 0 to 2000
+P2 -> start from 500 to 2500
+P3 -> start from 1000 to 3000
+P4 -> start from 1500 to 3500
+---------- PSJF 1 ----------
+P1 -> start from 0 to 25000
+P2 -> start from 1000 to 16000
+P3 -> start from 2000 to 10000
+P4 -> start from 3000 to 6000
+---------- PSJF 2 ----------
+P1 -> start from 0 to 4000
+P2 -> start from 1000 to 2000
+P3 -> start from 2000 to 11000
+P4 -> start from 5000 to 7000
+P5 -> start from 7000 to 8000
+---------- PSJF 3 ----------
+P1 -> start from 0 to 3500
+P2 -> start from 500 to 1000
+P3 -> start from 1000 to 1500
+P4 -> start from 1500 to 2000
+---------- PSJF 4 ----------
+P1 -> start from 0 to 14000
+P2 -> start from 0 to 3000
+P3 -> start from 100 to 1100
+P4 -> start from 200 to 7000
+---------- PSJF 5 ----------
+P1 -> start from 100 to 200
+P2 -> start from 100 to 4400
+P3 -> start from 200 to 400
+P4 -> start from 200 to 8400
+P5 -> start from 200 to 15400
