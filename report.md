@@ -16,36 +16,42 @@
     - `void sys_log_info(char* message)`
         - 透過 `pinrtk` 印 message 到 kernel 的 buffer。
 - 使用 process 的第一次拿到 cpu 的時間當成 start time
-- 使用 `sched_setaffinity` 來讓 scheduling 使用的 CPU 都固定在第一顆，將其他 process 的執行固定在第二顆，避免一些多 Core 執行的問題。
+- 使用 `sched_setaffinity` 來讓 scheduling 使用的 CPU 都固定在第一顆，將其他 process 的執行固定在第二顆。
 - 使用 `sched_setscheduler` 來調整 process 的 priority。
-- 四種scheduling plicy
+- 四種 scheduling plicy
     - FIFO
+        
         - 將所有 process 依據 ready time sort 過，然後等到前一個人結束再丟出來。
     - RR
+        
         - Implement 一個 ready queue，將ready time 到了的 process 放進 queue，等到週期（500 個 timestamp）到了，再從 ready queue 拿一個出來，把自己 push 進 queue，如果找不到，自己就繼續做。
     - SJF & preemptive SJF
         - 對於 SJF，在開頭的部分判斷一下 current process 是否存在，如果有，就不能打斷。
         - 如果沒有，那剩下的演算法跟 preemptive SJF 一模一樣，從目前的 active process 挑一個最短的process 來執行。
+        
+        
 
 
-## 3. 實驗結果
+## 3. 實驗結論
 
 ### Calculate unit time
 
 首先透過 T_MEASUREMENT 計算單位時間，根據 `TIME_MEASUREMENT_dmesg.txt` 的結果：
 
 ```c
-[19819.963888] [Project1] 10600 1588162600.763452504 1588162601.410629676
-[19821.254212] [Project1] 10603 1588162602.038254775 1588162602.701593983
-[19822.721271] [Project1] 10604 1588162603.461285069 1588162604.169390028
-[19824.076378] [Project1] 10605 1588162604.849552828 1588162605.525174666
-[19825.436717] [Project1] 10606 1588162606.206607289 1588162606.886194620
-[19826.823104] [Project1] 10607 1588162607.552670351 1588162608.273273153
-[19828.221351] [Project1] 10608 1588162608.982802313 1588162609.672220888
-[19829.634342] [Project1] 10609 1588162610.374502603 1588162611.085916845
-[19830.967566] [Project1] 10610 1588162611.764333871 1588162612.419808220
-[19832.332421] [Project1] 10611 1588162613.117757842 1588162613.785345517
+[Project1] 10600 1588162600.763452504 1588162601.410629676
+[Project1] 10603 1588162602.038254775 1588162602.701593983
+[Project1] 10604 1588162603.461285069 1588162604.169390028
+[Project1] 10605 1588162604.849552828 1588162605.525174666
+[Project1] 10606 1588162606.206607289 1588162606.886194620
+[Project1] 10607 1588162607.552670351 1588162608.273273153
+[Project1] 10608 1588162608.982802313 1588162609.672220888
+[Project1] 10609 1588162610.374502603 1588162611.085916845
+[Project1] 10610 1588162611.764333871 1588162612.419808220
+[Project1] 10611 1588162613.117757842 1588162613.785345517
 ```
+
+
 
 所有 process 的 執行時間依序為：
 
@@ -56,9 +62,9 @@
 
 平均為 `681832815.1 (ns)` ，再除以500為 `1363665.6302 (ns)`。
 
-以下根據每一種 test case 的理論時間與實驗時間進行分析。
+可以發現，這筆 test case 算是簡單的，可以假設其環境、cpu的狀態應該都要是差不多的，但是這些時間段裡，最小值647177172 ns，最大值 720602802 ns，幾乎快差了 0.1 秒，代表 user space 下的 scheduling 在計算時間上有不小的誤差。 
 
-以上的 python file 為 `test/get_t_unit.py`
+以上的 python file 為 `test/get_t_unit.py`，以下則會根據每一種 test case 的理論時間與實驗時間進行分析。
 
 
 
@@ -66,35 +72,56 @@
 
 實驗的結果放在最下方的 Attachment，以下僅寫出結論。
 
+
+
 #### 1. FIFO test case conclusion
 
-基本上FIFO不太會有 scheduling 的 cost，大部分的process間串接的時間都沒有差（前一個 end time 等於後一個 start time）。但總結果跟理論結果有一些出入，原因可能是 unit time 在每次的執行可能會差很多。舉例來說，以 FIFO_2 的unit time 應該要是我們計算出來的 98% 左右才會符合數據。
+基本上FIFO不太會有 scheduling 的 cost，大部分的 process 間串接的時間都沒有差（前一個 end time 等於後一個 start time）。但總結果跟理論結果有一些出入，原因可能是 unit time 在每次的執行可能會差很多。舉例來說，以 FIFO_2 的unit time 應該要是我們計算出來的 98.017% 左右才會符合數據，而調整後，將會貼近理想結果。
+
+
+
+|      | Experiment result | Adjusted experiment result | Theoritical result |
+| :--: | :---------------: | :------------------------: | :----------------: |
+|  P1  |     0 - 78414     |         0 - 80000          |     0 - 80000      |
+|  P2  |   78414 - 83396   |       80000 - 85083        |   80000 - 85000    |
+|  P3  |   83396 - 84395   |       85083 - 86102        |   85000 - 86000    |
+|  P4  |   84395 - 85387   |       86102 - 87114        |   86000 - 87000    |
+
+
 
 我後來有跑了三四次，發現 unit time 的時間範圍大概是 1280930.9722 ~ 1363665.6302，基本上還差蠻多的，就會造成一些基本的誤差。
 
+
+
 #### 2. RR test case conclusion
+
+原先使用了 `i % n` 的方式去找 next process，後來改成用 queue 來 enqueue 跟 dequeue，這樣下來真的進步蠻多的，context switch 的時間有觀察到明顯的減少。
 
 
 
 #### 3. SJF test case conclusion
 
+雖然從結果看不出來，但 SJF 我沒有用比較好的資料結構找最小的執行時間，因此 process 承上啟下間的時間比 FIFO 多出許多，多了大概十倍，但其實由於 testing data 的數量都比較少的關係，所以其實也只有差幾毫秒，但如果 process 數量上升，那誤差應該就會蠻明顯的。
+
+但基本上除了 unit time 的問題，沒有明顯的誤差。
+
 
 
 #### 4. PSJF test case conclusion
 
+跟上面的狀況差不多，又因為是 preemptive 的關係，使得每一個 time stamp 都會去找下一個 exec time 最小的 process，從我自己印出的 log 可以發現花了蠻多時間在 find next process ，可能實作上要盡可能減少這種 `O(n)` 搜尋。
 
-
-## 4. Attachment: 實驗記錄
+## 4. Attachment: 實驗結果
 
 - Experiment result
-    - 記錄實驗的數據，將全部的時間轉換為相對時間（取最早開始的process的ready time 對應到其理論起始time stamp）。
+    - 記錄實驗的數據，將全部的時間轉換為相對的 time stsamps（取最早開始的 process 的 ready time 對應到其理論起始 time stamp）。
     - 對應的 python file 為 `test/log_experiment_result.py`
 
 - Theoritical result
 
     - 我另外寫了一些 python file，再跑一次原先的 scheduling algroithm，得到參考用的結果，檔案為 `test/log_ground_truth.py` 。
 
-- 註：開始的time stamp為 process 的第一次拿到 cpu 的時間。
+- 註：開始的 time stamp 為  process 的第一次拿到 cpu 的時間。
 
 
 
@@ -120,6 +147,8 @@ P4 -> start from 1500 to 2000
 P5 -> start from 2000 to 2500
 ```
 
+---
+
 ### FIFO_2.txt
 
 #### Experiment result
@@ -139,6 +168,8 @@ P2 -> start from 80000 to 85000
 P3 -> start from 85000 to 86000
 P4 -> start from 86000 to 87000
 ```
+
+---
 
 ### FIFO_3.txt
 
@@ -166,6 +197,8 @@ P6 -> start from 18000 to 19000
 P7 -> start from 19000 to 23000
 ```
 
+---
+
 ### FIFO_4.txt
 
 #### Experiment result
@@ -185,6 +218,8 @@ P2 -> start from 2000 to 2500
 P3 -> start from 2500 to 2700
 P4 -> start from 2700 to 3200
 ```
+
+---
 
 ### FIFO_5.txt
 
@@ -212,6 +247,8 @@ P6 -> start from 18000 to 19000
 P7 -> start from 19000 to 23000
 ```
 
+---
+
 ### RR_1.txt
 
 #### Experiment result
@@ -234,6 +271,8 @@ P4 -> start from 1500 to 2000
 P5 -> start from 2000 to 2500
 ```
 
+---
+
 ### RR_2.txt
 
 #### Experiment result
@@ -249,6 +288,8 @@ P2 -> start from 1080 to 9320
 P1 -> start from 600 to 8100
 P2 -> start from 1100 to 9600
 ```
+
+---
 
 ### RR_3.txt
 
@@ -273,6 +314,8 @@ P4 -> start from 5900 to 31200
 P5 -> start from 6900 to 30200
 P6 -> start from 7900 to 28200
 ```
+
+---
 
 ### RR_4.txt
 
@@ -300,6 +343,8 @@ P6 -> start from 2500 to 6500
 P7 -> start from 3500 to 18500
 ```
 
+---
+
 ### RR_5.txt
 
 #### Experiment result
@@ -326,6 +371,8 @@ P6 -> start from 3000 to 7000
 P7 -> start from 3500 to 18500
 ```
 
+---
+
 ### SJF_1.txt
 
 #### Experiment result
@@ -345,6 +392,8 @@ P2 -> start from 0 to 2000
 P3 -> start from 2000 to 3000
 P4 -> start from 3000 to 7000
 ```
+
+---
 
 ### SJF_2.txt
 
@@ -367,6 +416,8 @@ P3 -> start from 200 to 400
 P4 -> start from 4400 to 8400
 P5 -> start from 8400 to 15400
 ```
+
+---
 
 ### SJF_3.txt
 
@@ -396,6 +447,8 @@ P7 -> start from 7120 to 11120
 P8 -> start from 23120 to 32120
 ```
 
+---
+
 ### SJF_4.txt
 
 #### Experiment result
@@ -418,6 +471,8 @@ P4 -> start from 9000 to 11000
 P5 -> start from 8000 to 9000
 ```
 
+---
+
 ### SJF_5.txt
 
 #### Experiment result
@@ -438,6 +493,8 @@ P3 -> start from 2500 to 3000
 P4 -> start from 3000 to 3500
 ```
 
+---
+
 ### PSJF_1.txt
 
 #### Experiment result
@@ -457,6 +514,8 @@ P2 -> start from 1000 to 16000
 P3 -> start from 2000 to 10000
 P4 -> start from 3000 to 6000
 ```
+
+---
 
 ### PSJF_2.txt
 
@@ -480,6 +539,8 @@ P4 -> start from 5000 to 7000
 P5 -> start from 7000 to 8000
 ```
 
+---
+
 ### PSJF_3.txt
 
 #### Experiment result
@@ -500,6 +561,8 @@ P3 -> start from 1000 to 1500
 P4 -> start from 1500 to 2000
 ```
 
+---
+
 ### PSJF_4.txt
 
 #### Experiment result
@@ -519,6 +582,8 @@ P2 -> start from 0 to 3000
 P3 -> start from 100 to 1100
 P4 -> start from 3000 to 7000
 ```
+
+---
 
 ### PSJF_5.txt
 
