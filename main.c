@@ -15,7 +15,7 @@ static int last_time;
 static int finish_n_proc;
 static Queue *ready_queue;
 
-// #define DEBUG
+#define DEBUG
 
 Process *read_input(int *policy, int *n_proc);
 void scheduling(int policy_id, int n_proc, Process *proc) ;
@@ -43,19 +43,21 @@ int is_process_ready(Process proc) {
 }
 
 void enqueue(int value) {
-    Queue *insert_point = ready_queue;
-    if (insert_point == NULL) {
-        insert_point = (Queue*)malloc(sizeof(Queue));
-        insert_point->value = value;
-        insert_point->next = NULL;
+    if (ready_queue == NULL) {
+        ready_queue = (Queue*)malloc(sizeof(Queue));
+        ready_queue->value = value;
+        ready_queue->next = NULL;
+        printf("ins %d\n", ready_queue->value);
         return;
     }
 
+    Queue *insert_point = ready_queue;
     while (1 == 1) {
         if (insert_point->next == NULL) {
             insert_point->next = (Queue*)malloc(sizeof(Queue));
             insert_point->next->value = value;
             insert_point->next->next = NULL;
+            printf("ins %d\n", insert_point->next->value);
             break;
         } else {
             insert_point = insert_point->next;
@@ -86,6 +88,7 @@ int get_next_process(int policy_id, int n_proc, Process *proc) {
         case _RR:
             if (cur_proc == -1 || (total_time - last_time) / 500 >= 1) {
                 int next = dequeue();
+                printf("%d\n", next);
                 if (next == -1) {
                     return cur_proc;
                 } else {
