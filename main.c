@@ -44,6 +44,13 @@ int is_process_ready(Process proc) {
 
 void enqueue(int value) {
     Queue *insert_point = ready_queue;
+    if (insert_point == NULL) {
+        insert_point = (Queue*)malloc(sizeof(Queue));
+        insert_point->value = value;
+        insert_point->next = NULL;
+        return;
+    }
+
     while (1 == 1) {
         if (insert_point->next == NULL) {
             insert_point->next = (Queue*)malloc(sizeof(Queue));
