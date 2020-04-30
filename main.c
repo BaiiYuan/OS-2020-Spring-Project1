@@ -84,7 +84,7 @@ int get_next_process(int policy_id, int n_proc, Process *proc) {
                 }
             } return -1;
         case _RR:
-            if (cur_proc == -1 || (total_time - last_time) / 500 >= 1) {
+            if (cur_proc == -1 || (total_time - last_time) % 500 == 0) {
                 int next = dequeue();
                 if (next == -1) {
                     return cur_proc;
