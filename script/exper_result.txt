@@ -31,37 +31,37 @@ P5 -> start from 17186 to 18172
 P6 -> start from 18172 to 19177
 P7 -> start from 19177 to 23163
 ---------- RR 1 ----------
-P1 -> start from 0 to 500
-P2 -> start from 500 to 988
-P3 -> start from 988 to 1491
-P4 -> start from 1491 to 1985
-P5 -> start from 1985 to 2481
+P1 -> start from 0 to 497
+P2 -> start from 497 to 989
+P3 -> start from 989 to 1474
+P4 -> start from 1474 to 1962
+P5 -> start from 1962 to 2452
 ---------- RR 2 ----------
-P1 -> start from 600 to 7855
-P2 -> start from 1080 to 9320
+P1 -> start from 600 to 8320
+P2 -> start from 1135 to 9822
 ---------- RR 3 ----------
-P1 -> start from 1200 to 20175
-P2 -> start from 2373 to 19371
-P3 -> start from 4276 to 18341
-P4 -> start from 5681 to 30722
-P5 -> start from 6619 to 29756
-P6 -> start from 7557 to 27705
+P1 -> start from 1200 to 20220
+P2 -> start from 2806 to 20730
+P3 -> start from 4352 to 18686
+P4 -> start from 6393 to 32058
+P5 -> start from 6901 to 31087
+P6 -> start from 8424 to 29113
 ---------- RR 4 ----------
-P1 -> start from 0 to 23105
-P2 -> start from 516 to 20111
-P3 -> start from 1029 to 14560
-P4 -> start from 1537 to 5556
-P5 -> start from 2049 to 6051
-P6 -> start from 2548 to 6560
-P7 -> start from 3542 to 18559
+P1 -> start from 0 to 23364
+P2 -> start from 515 to 20320
+P3 -> start from 1055 to 14701
+P4 -> start from 1577 to 5605
+P5 -> start from 2053 to 6102
+P6 -> start from 2576 to 6583
+P7 -> start from 3602 to 18800
 ---------- RR 5 ----------
-P1 -> start from 0 to 22972
-P2 -> start from 484 to 20017
-P3 -> start from 977 to 14563
-P4 -> start from 1465 to 5500
-P5 -> start from 1960 to 6026
-P6 -> start from 2967 to 7031
-P7 -> start from 3471 to 18562
+P1 -> start from 0 to 23302
+P2 -> start from 506 to 20308
+P3 -> start from 1025 to 14732
+P4 -> start from 1536 to 5625
+P5 -> start from 2053 to 6156
+P6 -> start from 3103 to 7179
+P7 -> start from 3602 to 18784
 ---------- SJF 1 ----------
 P1 -> start from 6967 to 13971
 P2 -> start from 0 to 2015

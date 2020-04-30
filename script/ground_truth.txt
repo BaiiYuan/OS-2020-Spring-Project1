@@ -40,12 +40,12 @@ P5 -> start from 2000 to 2500
 P1 -> start from 600 to 8100
 P2 -> start from 1100 to 9600
 ---------- RR 3 ----------
-P1 -> start from 1200 to 20700
-P2 -> start from 2400 to 19900
-P3 -> start from 4400 to 18900
-P4 -> start from 5900 to 31200
-P5 -> start from 6900 to 30200
-P6 -> start from 7900 to 28200
+P1 -> start from 1200 to 19700
+P2 -> start from 2700 to 20200
+P3 -> start from 4200 to 18200
+P4 -> start from 6200 to 31200
+P5 -> start from 6700 to 30200
+P6 -> start from 8200 to 28200
 ---------- RR 4 ----------
 P1 -> start from 0 to 23000
 P2 -> start from 500 to 20000

@@ -23,7 +23,7 @@ def get_next_process(policy, n_proc, proc):
                 return i
         return -1
     elif policy == "RR":
-        if cur_proc == -1 or (total_time - last_time) / 500 >= 1:
+        if cur_proc == -1 or (total_time - last_time) % 500 == 0:
             if len(ready_queue) == 0:
                 return cur_proc
             else:
